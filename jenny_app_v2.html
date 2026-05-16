@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jenny's Plan">
+<meta name="theme-color" content="#0f0f1a">
+<title>Jenny's Daily Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{font-family:'DM Sans',sans-serif;background:#0f0f1a;color:#f0ebe3;min-height:100vh;min-height:-webkit-fill-available;overscroll-behavior:none;-webkit-font-smoothing:antialiased}
+:root{
+  --bg:#0f0f1a;--surface:#1a1a2e;--surface2:#222238;--surface3:#2a2a46;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --cream:#f0ebe3;--cream-dim:rgba(240,235,227,0.55);--cream-faint:rgba(240,235,227,0.18);
+  --rose:#e8897e;--rose-dim:rgba(232,137,126,0.14);--rose-bright:#f0a89e;
+  --sage:#7bbf8a;--sage-dim:rgba(123,191,138,0.13);
+  --gold:#d4a853;--gold-dim:rgba(212,168,83,0.14);
+  --blue:#7ab4d4;--blue-dim:rgba(122,180,212,0.14);
+  --purple:#a48fd4;--purple-dim:rgba(164,143,212,0.14);
+  --teal:#6dc7b8;--teal-dim:rgba(109,199,184,0.14);
+  --safe-top:env(safe-area-inset-top,44px);
+  --safe-bottom:env(safe-area-inset-bottom,34px)
+}
+::-webkit-scrollbar{display:none}
+
+/* APP SHELL */
+#app{max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative}
+.status-spacer{height:var(--safe-top);background:var(--bg);flex-shrink:0}
+
+/* HEADER */
+.app-header{background:var(--bg);padding:10px 22px 14px;flex-shrink:0}
+.header-row{display:flex;align-items:flex-start;justify-content:space-between}
+.header-greeting{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:400;line-height:1.15}
+.header-greeting em{font-style:italic;color:var(--rose-bright)}
+.header-date{font-size:0.73rem;color:var(--cream-dim);font-weight:300;margin-top:2px}
+.ring-wrap{flex-shrink:0;margin-left:10px;margin-top:2px;text-align:center}
+.ring-svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--surface2);stroke-width:4}
+.ring-fill{fill:none;stroke:var(--rose);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1)}
+.ring-ct{fill:var(--cream);font-family:'Fraunces',serif;font-size:11px;text-anchor:middle;dominant-baseline:middle}
+.ring-label{font-size:0.6rem;color:var(--cream-dim);margin-top:2px;letter-spacing:.04em}
+
+/* PHASE BANNER */
+.phase-banner{margin:0 22px 4px;padding:9px 13px;border-radius:12px;display:flex;align-items:center;gap:9px;font-size:0.78rem;border:1px solid var(--border2)}
+.phase-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.phase-txt{color:rgba(240,235,227,0.75);line-height:1.3}
+.phase-txt strong{color:var(--cream)}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(15,15,26,0.96);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-top:1px solid var(--border);padding:8px 0 calc(8px + var(--safe-bottom));display:flex;justify-content:space-around;z-index:100}
+.ni{display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 10px;cursor:pointer;border:none;background:none;color:rgba(240,235,227,0.3);transition:color .2s;font-family:'DM Sans',sans-serif;-webkit-user-select:none}
+.ni.active{color:var(--rose-bright)}
+.ni-icon{font-size:1.25rem;line-height:1}
+.ni-label{font-size:0.6rem;font-weight:500;letter-spacing:.03em}
+
+/* MAIN SCROLL */
+.main-scroll{flex:1;overflow-y:auto;padding:14px 22px calc(96px + var(--safe-bottom));-webkit-overflow-scrolling:touch}
+
+/* SCREENS */
+.screen{display:none}
+.screen.active{display:block}
+
+/* SECTION */
+.sec-head{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:400;color:var(--cream);margin-bottom:3px}
+.sec-sub{font-size:0.76rem;color:var(--cream-dim);margin-bottom:14px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:15px;margin-bottom:11px}
+.card-title{font-size:0.63rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:11px}
+
+/* PROGRESS BAR */
+.pbar-wrap{margin-bottom:12px}
+.pbar{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.pbar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--rose),var(--rose-bright));transition:width .5s cubic-bezier(.4,0,.2,1)}
+.pbar-labels{display:flex;justify-content:space-between;font-size:0.7rem;color:var(--cream-dim)}
+.pbar-labels span:last-child{color:var(--rose-bright);font-weight:600}
+
+/* STATS GRID */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px}
+.sc-label{font-size:0.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:5px}
+.sc-val{font-family:'Fraunces',serif;font-size:1.7rem;font-weight:400;line-height:1;color:var(--cream)}
+.sc-unit{font-size:0.75rem;color:var(--cream-dim)}
+.sc-sub{font-size:0.7rem;color:var(--cream-dim);margin-top:3px}
+
+/* CHECK ITEMS */
+.cg-title{font-size:0.65rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--cream-dim);padding:13px 0 7px;display:flex;align-items:center;gap:7px}
+.cg-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ci{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:13px;margin-bottom:7px;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);-webkit-user-select:none;user-select:none}
+.ci.done{border-color:rgba(123,191,138,0.22);background:rgba(123,191,138,0.05)}
+.ci:active{transform:scale(0.97)}
+.ci-box{width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .25s cubic-bezier(.4,0,.2,1);font-size:0.72rem}
+.ci.done .ci-box{background:var(--sage);border-color:var(--sage);color:#0f0f1a}
+.ci-body{flex:1}
+.ci-name{font-size:0.87rem;font-weight:500;color:var(--cream);line-height:1.2;transition:opacity .2s}
+.ci.done .ci-name{opacity:.4;text-decoration:line-through;text-decoration-color:rgba(240,235,227,0.2)}
+.ci-detail{font-size:0.73rem;color:var(--cream-dim);margin-top:2px;line-height:1.45}
+.ci.done .ci-detail{opacity:.35}
+.badge{display:inline-block;padding:2px 8px;border-radius:18px;font-size:0.65rem;font-weight:700;flex-shrink:0}
+.b-rose{background:var(--rose-dim);color:var(--rose-bright)}
+.b-sage{background:var(--sage-dim);color:var(--sage)}
+.b-gold{background:var(--gold-dim);color:var(--gold)}
+.b-blue{background:var(--blue-dim);color:var(--blue)}
+.b-purple{background:var(--purple-dim);color:var(--purple)}
+.b-teal{background:var(--teal-dim);color:var(--teal)}
+
+/* WATER */
+.water-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+.wc{aspect-ratio:1;border-radius:9px;border:1.5px solid rgba(122,180,212,0.28);background:rgba(122,180,212,0.05);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .2s cubic-bezier(.4,0,.2,1);-webkit-user-select:none}
+.wc.filled{background:rgba(122,180,212,0.22);border-color:var(--blue);transform:scale(1.07)}
+.wc:active{transform:scale(0.9)}
+
+/* PROTEIN */
+.pt-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:11px}
+.pt-nums{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.pt-current{font-family:'Fraunces',serif;font-size:2rem;font-weight:400;line-height:1}
+.pt-unit{font-size:0.8rem;color:var(--cream-dim);margin-left:3px}
+.pt-target{font-size:0.75rem;color:var(--cream-dim)}
+.pt-bar{height:8px;background:var(--surface2);border-radius:4px;overflow:visible;margin-bottom:5px;position:relative}
+.pt-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--rose),var(--rose-bright));transition:width .5s cubic-bezier(.4,0,.2,1);position:relative}
+.pt-fill::after{content:'';position:absolute;right:-3px;top:50%;transform:translateY(-50%);width:7px;height:7px;border-radius:50%;background:var(--rose-bright);box-shadow:0 0 5px var(--rose)}
+.pt-status{font-size:0.73rem;color:var(--cream-dim)}
+
+/* MEAL CARDS */
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:15px;overflow:hidden;margin-bottom:9px;transition:all .2s;-webkit-user-select:none}
+.mc.eaten{border-color:rgba(123,191,138,0.28);background:rgba(123,191,138,0.04)}
+.mc:active{transform:scale(0.98)}
+.mc-top{padding:12px 13px;display:flex;align-items:center;gap:9px;cursor:pointer}
+.mc-emoji{font-size:1.3rem;flex-shrink:0}
+.mc-info{flex:1}
+.mc-name{font-size:0.88rem;font-weight:600;margin-bottom:1px}
+.mc-sub{font-size:0.73rem;color:var(--cream-dim)}
+.mc-status{width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:0.75rem;transition:all .25s;flex-shrink:0}
+.mc.eaten .mc-status{background:var(--sage);border-color:var(--sage);color:#0f0f1a}
+.mc-protein{padding:0 13px 10px;font-size:0.73rem;color:var(--rose-bright);font-weight:600}
+/* Substitution toggle */
+.mc-subs-btn{padding:0 13px 10px;display:flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--blue);cursor:pointer;-webkit-user-select:none}
+.mc-subs-btn:active{opacity:.7}
+.mc-subs{display:none;padding:0 13px 12px}
+.mc-subs.open{display:block}
+.sub-item{background:var(--surface2);border-radius:9px;padding:9px 11px;margin-bottom:5px;font-size:0.78rem;line-height:1.55;border:1px solid var(--border)}
+.sub-item strong{color:var(--cream)}
+
+/* SUPP GRID */
+.sg2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sc2{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:11px;cursor:pointer;transition:all .2s;-webkit-user-select:none;position:relative;overflow:hidden}
+.sc2.taken{border-color:rgba(123,191,138,0.28);background:rgba(123,191,138,0.06)}
+.sc2:active{transform:scale(0.94)}
+.sc2-timing{position:absolute;top:7px;right:7px}
+.sc2-icon{font-size:1.2rem;margin-bottom:5px}
+.sc2-name{font-size:0.8rem;font-weight:600;line-height:1.2;margin-bottom:2px}
+.sc2-dose{font-size:0.7rem;color:var(--cream-dim)}
+.sc2-chk{position:absolute;bottom:7px;right:7px;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:0.58rem;transition:all .2s}
+.sc2.taken .sc2-chk{background:var(--sage);border-color:var(--sage);color:#0f0f1a}
+.sc2.taken .sc2-name{opacity:.7}
+
+/* TIMELINE */
+.tl-grp{font-size:0.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--cream-dim);margin:16px 0 9px;display:flex;align-items:center;gap:7px}
+.tl-grp::after{content:'';flex:1;height:1px;background:var(--border)}
+.tli{display:flex;gap:10px;margin-bottom:7px;align-items:flex-start}
+.tli-time{width:38px;font-size:0.7rem;color:var(--cream-dim);font-weight:500;padding-top:13px;flex-shrink:0;text-align:right}
+.tli-line{display:flex;flex-direction:column;align-items:center;padding-top:16px}
+.tli-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tli-bar{width:1.5px;flex:1;min-height:14px;background:var(--border);margin-top:4px}
+.tli-body{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:10px 13px;margin-bottom:0}
+.tli-cat{font-size:0.6rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.tli-main{font-size:0.86rem;font-weight:500;line-height:1.3}
+.tli-detail{font-size:0.75rem;color:var(--cream-dim);margin-top:3px;line-height:1.45}
+
+/* DAY SELECTOR */
+.day-scroll{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.dp{flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:7px 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all .2s;-webkit-user-select:none;min-width:48px}
+.dp.active{background:var(--rose);border-color:var(--rose);color:#0f0f1a}
+.dp.today{border-color:var(--rose)}
+.dp:active{transform:scale(0.92)}
+.dp-name{font-size:0.6rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.dp-num{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:400;line-height:1}
+.dp-tag{font-size:0.53rem;font-weight:700;margin-top:1px;letter-spacing:.03em}
+
+/* NOTE BOX */
+.note-box{background:var(--gold-dim);border:1px solid rgba(212,168,83,0.2);border-radius:12px;padding:11px 13px;margin-bottom:11px;font-size:0.78rem;color:rgba(240,235,227,0.8);line-height:1.6}
+.note-box strong{color:var(--gold)}
+.note-box.blue{background:var(--blue-dim);border-color:rgba(122,180,212,0.2)}
+.note-box.blue strong{color:var(--blue)}
+.note-box.rose{background:var(--rose-dim);border-color:rgba(232,137,126,0.2)}
+.note-box.rose strong{color:var(--rose-bright)}
+.note-box.sage{background:var(--sage-dim);border-color:rgba(123,191,138,0.2)}
+.note-box.sage strong{color:var(--sage)}
+
+/* WEIGHT SECTION */
+.weight-input-wrap{display:flex;gap:9px;align-items:center;margin-bottom:13px}
+.weight-input{flex:1;background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;padding:13px 16px;font-size:1.1rem;font-weight:500;color:var(--cream);font-family:'DM Sans',sans-serif;-webkit-appearance:none;outline:none;text-align:center;letter-spacing:.02em;transition:border-color .2s}
+.weight-input:focus{border-color:var(--rose)}
+.weight-input::placeholder{color:var(--cream-faint);font-size:0.9rem}
+.weight-save-btn{background:var(--rose);color:#0f0f1a;border:none;border-radius:12px;padding:13px 18px;font-size:0.85rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;transition:background .2s}
+.weight-save-btn:active{background:var(--rose-bright)}
+
+.weight-chart{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:11px;overflow:hidden}
+.wc-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.wc-title{font-size:0.63rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--cream-dim)}
+.wc-current{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:400;color:var(--cream)}
+.wc-unit{font-size:0.75rem;color:var(--cream-dim)}
+.wc-trend{font-size:0.72rem;font-weight:600;padding:2px 8px;border-radius:10px}
+.wc-grid{display:flex;align-items:flex-end;gap:4px;height:70px}
+.wc-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.wc-bar{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height .4s cubic-bezier(.4,0,.2,1)}
+.wc-bar-date{font-size:0.55rem;color:var(--cream-dim);transform:rotate(-45deg);transform-origin:top left;white-space:nowrap;margin-left:3px}
+.wc-empty{color:var(--cream-dim);font-size:0.8rem;text-align:center;padding:24px 0}
+
+/* REFLECTION */
+.ref-section{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:15px;margin-bottom:11px}
+.ref-q{margin-bottom:16px}
+.ref-q-text{font-size:0.88rem;font-weight:600;color:var(--cream);margin-bottom:8px;line-height:1.35}
+.ref-q-sub{font-size:0.73rem;color:var(--cream-dim);margin-bottom:8px;line-height:1.4}
+
+/* Rating buttons */
+.rating-row{display:flex;gap:6px}
+.rb{flex:1;padding:9px 4px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s;-webkit-user-select:none;font-size:0.78rem;font-weight:600;color:var(--cream-dim);font-family:'DM Sans',sans-serif}
+.rb:active{transform:scale(0.93)}
+.rb.sel-1{background:rgba(232,137,126,0.25);border-color:var(--rose);color:var(--rose-bright)}
+.rb.sel-2{background:rgba(212,168,83,0.2);border-color:var(--gold);color:var(--gold)}
+.rb.sel-3{background:rgba(123,191,138,0.2);border-color:var(--sage);color:var(--sage)}
+.rb.sel-4{background:rgba(123,191,138,0.3);border-color:var(--sage);color:var(--sage)}
+.rb.sel-5{background:rgba(109,199,184,0.25);border-color:var(--teal);color:var(--teal)}
+
+/* Yes/No */
+.yn-row{display:flex;gap:8px}
+.yn-btn{flex:1;padding:10px;background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;text-align:center;cursor:pointer;transition:all .2s;-webkit-user-select:none;font-size:0.85rem;font-weight:600;color:var(--cream-dim);font-family:'DM Sans',sans-serif}
+.yn-btn:active{transform:scale(0.95)}
+.yn-btn.sel-yes{background:rgba(123,191,138,0.2);border-color:var(--sage);color:var(--sage)}
+.yn-btn.sel-no{background:rgba(232,137,126,0.18);border-color:var(--rose);color:var(--rose-bright)}
+.yn-btn.sel-na{background:rgba(212,168,83,0.18);border-color:var(--gold);color:var(--gold)}
+
+/* Emoji scale */
+.emoji-row{display:flex;gap:5px}
+.eb{flex:1;padding:8px 3px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s;-webkit-user-select:none;font-size:1.1rem;font-family:'DM Sans',sans-serif;line-height:1}
+.eb:active{transform:scale(0.9)}
+.eb.sel{border-color:var(--rose-bright);background:rgba(232,137,126,0.18);transform:scale(1.08)}
+
+/* Textarea */
+.ref-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:11px 13px;font-size:0.85rem;color:var(--cream);font-family:'DM Sans',sans-serif;resize:none;outline:none;min-height:80px;transition:border-color .2s;line-height:1.5}
+.ref-textarea:focus{border-color:var(--rose)}
+.ref-textarea::placeholder{color:var(--cream-faint);font-size:0.8rem}
+
+.ref-save-btn{width:100%;background:var(--rose);color:#0f0f1a;border:none;border-radius:13px;padding:15px;font-size:0.95rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:6px;letter-spacing:.02em;transition:background .2s}
+.ref-save-btn:active{background:var(--rose-bright)}
+
+/* SAVED LOG */
+.log-entry{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:12px 14px;margin-bottom:9px}
+.log-date{font-size:0.7rem;font-weight:700;color:var(--cream-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em}
+.log-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
+.log-row:last-child{border-bottom:none}
+.log-key{font-size:0.75rem;color:var(--cream-dim)}
+.log-val{font-size:0.78rem;font-weight:600;color:var(--cream);text-align:right;max-width:55%}
+.log-notes-text{font-size:0.78rem;color:var(--cream-dim);margin-top:7px;line-height:1.5;font-style:italic;padding:8px;background:var(--surface2);border-radius:8px}
+
+/* EXPORT */
+.export-btn{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:13px;padding:14px;font-size:0.88rem;font-weight:600;color:var(--cream);font-family:'DM Sans',sans-serif;cursor:pointer;margin-bottom:9px;letter-spacing:.01em;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.export-btn:active{background:var(--surface3)}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(82px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface2);border:1px solid var(--border2);color:var(--cream);padding:9px 18px;border-radius:20px;font-size:0.82rem;font-weight:500;white-space:nowrap;opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);z-index:200;backdrop-filter:blur(12px);max-width:290px;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* CONFETTI */
+.celebration{position:fixed;inset:0;pointer-events:none;z-index:999;display:none}
+.celebration.show{display:block}
+.conf{position:absolute;width:7px;height:7px;border-radius:2px;animation:cfall 1.2s ease-out forwards}
+@keyframes cfall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* WELCOME */
+.welcome{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;text-align:center;transition:opacity .4s ease}
+.welcome.hidden{opacity:0;pointer-events:none}
+.welcome-j{font-family:'Fraunces',serif;font-size:3.5rem;font-style:italic;color:var(--rose-bright);margin-bottom:6px}
+.welcome-name{font-family:'Fraunces',serif;font-size:1.7rem;color:var(--cream);margin-bottom:12px}
+.welcome-sub{font-size:0.87rem;color:var(--cream-dim);line-height:1.6;margin-bottom:32px}
+.welcome-btn{background:var(--rose);color:#0f0f1a;border:none;padding:15px 36px;border-radius:50px;font-size:0.95rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.02em}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:4px 0 14px}
+
+/* SLIDE UP */
+@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.screen.active .card,.screen.active .ci,.screen.active .mc,.screen.active .log-entry,.screen.active .ref-section{animation:su .32s ease both}
+</style>
+</head>
+<body>
+
+<div class="welcome" id="welcome">
+  <div class="welcome-j">J</div>
+  <div class="welcome-name">Hey Jenny 👋</div>
+  <p class="welcome-sub">Your daily wellness plan is right here.<br>Check off your day one tap at a time.<br>Track how you feel as you start HRT.<br>We'll use your notes to make June even better.</p>
+  <button class="welcome-btn" onclick="dismissWelcome()">I'm ready</button>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="celebration" id="celebration"></div>
+
+<div id="app">
+  <div class="status-spacer"></div>
+  <div class="app-header">
+    <div class="header-row">
+      <div>
+        <div class="header-greeting">Good <em id="tod">morning</em>, Jenny ✨</div>
+        <div class="header-date" id="hdate"></div>
+      </div>
+      <div class="ring-wrap">
+        <svg width="54" height="54" class="ring-svg" viewBox="0 0 54 54">
+          <circle class="ring-bg" cx="27" cy="27" r="21"/>
+          <circle class="ring-fill" id="ringFill" cx="27" cy="27" r="21" stroke-dasharray="131.9" stroke-dashoffset="131.9"/>
+          <text class="ring-ct" id="ringTxt" transform="rotate(90,27,27)" x="27" y="27">0%</text>
+        </svg>
+        <div class="ring-label">today</div>
+      </div>
+    </div>
+  </div>
+  <div class="phase-banner" id="phaseBanner">
+    <div class="phase-dot" id="phaseDot"></div>
+    <div class="phase-txt" id="phaseTxt"></div>
+  </div>
+
+  <div class="main-scroll">
+
+    <!-- ═══ TODAY ═══ -->
+    <div id="s-today" class="screen active">
+      <div style="height:12px"></div>
+      <div class="pbar-wrap">
+        <div class="pbar"><div class="pbar-fill" id="dpFill" style="width:0%"></div></div>
+        <div class="pbar-labels"><span id="dpDone">0 of 0 done</span><span id="dpPct">0%</span></div>
+      </div>
+      <div class="sg">
+        <div class="sc"><div class="sc-label">💧 Water</div><div class="sc-val"><span id="sw">0</span><span class="sc-unit"> / 10</span></div><div class="sc-sub">glasses today</div></div>
+        <div class="sc"><div class="sc-label">🥩 Protein</div><div class="sc-val"><span id="sp">0</span><span class="sc-unit">g</span></div><div class="sc-sub">goal: 120–130g</div></div>
+      </div>
+      <div class="sg">
+        <div class="sc" id="todayWeight" style="cursor:pointer" onclick="switchScreen('track')"><div class="sc-label">⚖️ Weight</div><div class="sc-val"><span id="sw2" style="font-size:1.3rem">--</span><span class="sc-unit"> lb</span></div><div class="sc-sub" style="color:var(--blue)">tap to log →</div></div>
+        <div class="sc" id="tonightRef" style="cursor:pointer" onclick="switchScreen('reflect')"><div class="sc-label">🌙 Tonight</div><div class="sc-val" style="font-size:1.1rem" id="refStatus">Pending</div><div class="sc-sub" style="color:var(--purple)">nightly check-in →</div></div>
+      </div>
+
+      <div class="cg-title"><div class="cg-dot" style="background:var(--gold)"></div>Morning</div>
+      <div class="ci" id="c-acv" onclick="toggleCI('c-acv',4)"><div class="ci-box" id="cb-acv"></div><div class="ci-body"><div class="ci-name">💧 ACV Water</div><div class="ci-detail">500ml warm water + 1 tbsp ACV · first thing 6:30am</div></div><span class="badge b-blue">6:30</span></div>
+      <div class="ci" id="c-testosterone" onclick="toggleCI('c-testosterone',4)"><div class="ci-box" id="cb-testosterone"></div><div class="ci-body"><div class="ci-name" id="testLabel">🧴 Testosterone</div><div class="ci-detail" id="testDetail">Wrists → thighs · Days 1–21 only</div></div><span class="badge b-gold">Hormone</span></div>
+      <div class="ci" id="c-iron" onclick="toggleCI('c-iron',4)"><div class="ci-box" id="cb-iron"></div><div class="ci-body"><div class="ci-name">🔴 Iron + Vit C</div><div class="ci-detail">1 capsule · near empty stomach</div></div><span class="badge b-rose">AM</span></div>
+      <div class="ci" id="c-greens" onclick="toggleCI('c-greens',4)"><div class="ci-box" id="cb-greens"></div><div class="ci-body"><div class="ci-name">🌿 Greens HD</div><div class="ci-detail">1 scoop in water</div></div><span class="badge b-sage">AM</span></div>
+      <div class="ci" id="c-d3b12" onclick="toggleCI('c-d3b12',4)"><div class="ci-box" id="cb-d3b12"></div><div class="ci-body"><div class="ci-name">☀️ D3 + B6/B12</div><div class="ci-detail">D3 (2–4 caps) + B6/B12 (1 tablet) with food</div></div><span class="badge b-gold">AM</span></div>
+      <div class="ci" id="c-breakfast" onclick="toggleCI('c-breakfast',4,'meal',37)"><div class="ci-box" id="cb-breakfast"></div><div class="ci-body"><div class="ci-name">🥚 Breakfast · 35–40g protein</div><div class="ci-detail">CoQ10 + Berberine + Enzyme with food</div></div><span class="badge b-rose">7:30</span></div>
+
+      <div class="cg-title"><div class="cg-dot" style="background:var(--purple)"></div>Activity</div>
+      <div class="ci" id="c-move" onclick="toggleCI('c-move',8)"><div class="ci-box" id="cb-move"></div><div class="ci-body"><div class="ci-name" id="moveLabel">🚶 Walk · 45–60 min</div><div class="ci-detail" id="moveDetail">7,000–8,000 steps · get outside</div></div><span class="badge b-purple">Move</span></div>
+
+      <div class="cg-title"><div class="cg-dot" style="background:var(--sage)"></div>Midday</div>
+      <div class="ci" id="c-lunch" onclick="toggleCI('c-lunch',4,'meal',35)"><div class="ci-box" id="cb-lunch"></div><div class="ci-body"><div class="ci-name">🥗 Lunch · 30–35g protein</div><div class="ci-detail">Zinc Citrate + Digestive Enzyme with meal</div></div><span class="badge b-sage">12:30</span></div>
+      <div class="ci" id="c-snack" onclick="toggleCI('c-snack',4,'meal',18)"><div class="ci-box" id="cb-snack"></div><div class="ci-body"><div class="ci-name">🍎 Afternoon snack · 15–20g protein</div><div class="ci-detail">Don't skip — keeps blood sugar stable</div></div><span class="badge b-gold">3pm</span></div>
+
+      <div class="cg-title"><div class="cg-dot" style="background:var(--rose)"></div>Evening</div>
+      <div class="ci" id="c-dinner" onclick="toggleCI('c-dinner',4,'meal',38)"><div class="ci-box" id="cb-dinner"></div><div class="ci-body"><div class="ci-name">🍽 Dinner · 35–40g protein</div><div class="ci-detail">Berberine + Digestive Enzyme with meal</div></div><span class="badge b-rose">6:30</span></div>
+      <div class="ci" id="c-evening" onclick="toggleCI('c-evening',4)"><div class="ci-box" id="cb-evening"></div><div class="ci-body"><div class="ci-name">⚡ Creatine + Glutamine</div><div class="ci-detail">3–5g creatine + 5g glutamine in water</div></div><span class="badge b-blue">PM</span></div>
+
+      <div class="cg-title"><div class="cg-dot" style="background:var(--purple)"></div>Bedtime</div>
+      <div class="ci" id="c-progesterone" onclick="toggleCI('c-progesterone',4)"><div class="ci-box" id="cb-progesterone"></div><div class="ci-body"><div class="ci-name" id="progLabel">💊 Progesterone 100mg SR</div><div class="ci-detail" id="progDetail">Oral · bedtime · Days 14–28 only</div></div><span class="badge b-purple">9pm</span></div>
+      <div class="ci" id="c-magnesium" onclick="toggleCI('c-magnesium',4)"><div class="ci-box" id="cb-magnesium"></div><div class="ci-body"><div class="ci-name">🌙 Magnesium Bisglycinate</div><div class="ci-detail">200–400mg · sleep, cramps, recovery</div></div><span class="badge b-purple">9pm</span></div>
+      <div class="ci" id="c-sleep" onclick="toggleCI('c-sleep',4)"><div class="ci-box" id="cb-sleep"></div><div class="ci-body"><div class="ci-name">😴 Lights out by 10pm</div><div class="ci-detail">Phone on Do Not Disturb · 8 hours minimum</div></div><span class="badge b-purple">10pm</span></div>
+    </div>
+
+    <!-- ═══ WATER ═══ -->
+    <div id="s-water" class="screen">
+      <div style="height:12px"></div>
+      <div class="sec-head">Hydration 💧</div>
+      <div class="sec-sub">2.5–3 litres per day · 10–12 glasses</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:0.9rem;font-weight:600">Today's glasses</span>
+          <span style="color:var(--blue);font-weight:700;font-size:0.9rem"><span id="wnum">0</span> / 10</span>
+        </div>
+        <div class="water-grid" id="wcups"></div>
+        <div style="margin-top:11px">
+          <div class="pbar"><div class="pbar-fill" id="wbarFill" style="width:0%;background:linear-gradient(90deg,var(--blue),#aad4ea)"></div></div>
+          <div class="pbar-labels"><span id="wml">0ml of 2,500ml</span><span style="color:var(--blue);font-weight:700" id="wpct">0%</span></div>
+        </div>
+      </div>
+      <div class="note-box blue">
+        <strong>Start of day:</strong> 500ml warm water + 1 tbsp ACV. Always diluted — never straight.<br>
+        <strong>Period week:</strong> increase to 3L. Dehydration makes cramps worse.<br>
+        <strong>After 7pm:</strong> taper fluids so you're not up all night.
+      </div>
+      <div class="card">
+        <div class="card-title">Daily Schedule</div>
+        <div class="ci" style="cursor:default"><div style="font-size:1.1rem">🌅</div><div class="ci-body"><div class="ci-name">6:30am · ACV Water</div><div class="ci-detail">500ml warm water + 1 tbsp ACV on wake</div></div><span class="badge b-blue">500ml</span></div>
+        <div class="ci" style="cursor:default"><div style="font-size:1.1rem">🏃</div><div class="ci-body"><div class="ci-name">During activity</div><div class="ci-detail">500ml · bring a bottle every time</div></div><span class="badge b-blue">500ml</span></div>
+        <div class="ci" style="cursor:default"><div style="font-size:1.1rem">🥗</div><div class="ci-body"><div class="ci-name">Around lunch</div><div class="ci-detail">500ml · herbal tea counts</div></div><span class="badge b-blue">500ml</span></div>
+        <div class="ci" style="cursor:default"><div style="font-size:1.1rem">☀️</div><div class="ci-body"><div class="ci-name">3–5pm</div><div class="ci-detail">Should be at 2L by 5pm — catch up if not</div></div><span class="badge b-blue">500ml</span></div>
+        <div class="ci" style="cursor:default"><div style="font-size:1.1rem">🍽</div><div class="ci-body"><div class="ci-name">With dinner</div><div class="ci-detail">250–500ml · taper after 7pm</div></div><span class="badge b-blue">500ml</span></div>
+        <div class="ci" style="cursor:default"><div style="font-size:1.1rem">🍵</div><div class="ci-body"><div class="ci-name">Evening · herbal tea only</div><div class="ci-detail">Chamomile, raspberry leaf, or ginger. No caffeine.</div></div><span class="badge b-sage">Tea</span></div>
+      </div>
+    </div>
+
+    <!-- ═══ MEALS ═══ -->
+    <div id="s-meals" class="screen">
+      <div style="height:12px"></div>
+      <div class="sec-head">Meals & Protein 🥩</div>
+      <div class="sec-sub">Goal: 120–130g protein per day</div>
+      <div class="pt-wrap">
+        <div class="card-title">Protein Today</div>
+        <div class="pt-nums">
+          <div><span class="pt-current" id="pCur">0</span><span class="pt-unit">g eaten</span></div>
+          <div class="pt-target">Goal: 120–130g</div>
+        </div>
+        <div class="pt-bar"><div class="pt-fill" id="pFill" style="width:0%"></div></div>
+        <div class="pt-status" id="pStatus">Tap each meal below as you eat it</div>
+      </div>
+      <div class="note-box sage">
+        <strong>Simple rule:</strong> Every time you eat, there's a protein source on the plate. You don't need to count — just tap each meal. The number adds itself up.
+      </div>
+
+      <!-- BREAKFAST -->
+      <div class="mc" id="m-breakfast">
+        <div class="mc-top" onclick="toggleMeal('m-breakfast',37)">
+          <div class="mc-emoji">🌅</div>
+          <div class="mc-info"><div class="mc-name">Breakfast</div><div class="mc-sub">7:30am · 35–40g protein</div></div>
+          <div class="mc-status" id="ms-breakfast">✓</div>
+        </div>
+        <div class="mc-protein">Suggestion: 3 eggs + Greek yogurt + hemp hearts ≈ 40g</div>
+        <div class="mc-subs-btn" onclick="toggleSubs('subs-breakfast')">🔄 <span>Don't have that? See substitutions</span></div>
+        <div class="mc-subs" id="subs-breakfast">
+          <div class="sub-item"><strong>No eggs:</strong> 1.5 cups Greek yogurt + 1 scoop protein powder + hemp hearts ≈ 45g. Just as good.</div>
+          <div class="sub-item"><strong>No Greek yogurt:</strong> 3 eggs + 1 cup cottage cheese + flaxseed ≈ 38g. Or smoked salmon + eggs.</div>
+          <div class="sub-item"><strong>No appetite in AM:</strong> Protein smoothie — 1 scoop protein + 1 cup Greek yogurt + 2 tbsp hemp hearts + berries ≈ 40g. Drinkable, fast.</div>
+          <div class="sub-item"><strong>Plant-based:</strong> 1.5 cups silken tofu scramble + hemp hearts + nutritional yeast ≈ 30g. Add protein powder to hit 40g.</div>
+        </div>
+      </div>
+
+      <!-- LUNCH -->
+      <div class="mc" id="m-lunch">
+        <div class="mc-top" onclick="toggleMeal('m-lunch',35)">
+          <div class="mc-emoji">🥗</div>
+          <div class="mc-info"><div class="mc-name">Lunch</div><div class="mc-sub">12:30pm · 30–35g protein</div></div>
+          <div class="mc-status" id="ms-lunch">✓</div>
+        </div>
+        <div class="mc-protein">Suggestion: Grilled chicken + salad + hemp hearts ≈ 42g</div>
+        <div class="mc-subs-btn" onclick="toggleSubs('subs-lunch')">🔄 <span>Don't have that? See substitutions</span></div>
+        <div class="mc-subs" id="subs-lunch">
+          <div class="sub-item"><strong>No chicken:</strong> Canned salmon or tuna (1 can) + mixed greens + avocado ≈ 30g. Ready in 3 minutes.</div>
+          <div class="sub-item"><strong>No salad / don't feel like it:</strong> Turkey wrap — 150g turkey + whole grain wrap + veggies ≈ 38g.</div>
+          <div class="sub-item"><strong>Leftovers from dinner:</strong> Any protein from last night + a handful of hemp hearts on top. Done.</div>
+          <div class="sub-item"><strong>Eating out:</strong> Any grilled protein + vegetables. Ask for dressing on the side. Skip the bread.</div>
+          <div class="sub-item"><strong>Vegetarian:</strong> Lentil soup + feta + hemp hearts ≈ 28g. Add protein powder to a smoothie on the side to bridge the gap.</div>
+        </div>
+      </div>
+
+      <!-- SNACK -->
+      <div class="mc" id="m-snack">
+        <div class="mc-top" onclick="toggleMeal('m-snack',18)">
+          <div class="mc-emoji">🍎</div>
+          <div class="mc-info"><div class="mc-name">Afternoon Snack</div><div class="mc-sub">3:00pm · 15–20g protein · don't skip</div></div>
+          <div class="mc-status" id="ms-snack">✓</div>
+        </div>
+        <div class="mc-protein">Suggestion: Cottage cheese + apple + walnuts ≈ 25g</div>
+        <div class="mc-subs-btn" onclick="toggleSubs('subs-snack')">🔄 <span>Don't have that? See substitutions</span></div>
+        <div class="mc-subs" id="subs-snack">
+          <div class="sub-item"><strong>Quick grab:</strong> 2 hard-boiled eggs + string cheese ≈ 18g. Make a batch Sunday, grab all week.</div>
+          <div class="sub-item"><strong>Sweet craving:</strong> Greek yogurt + berries + drizzle of honey ≈ 18g. Satisfies the sweet without spiking blood sugar.</div>
+          <div class="sub-item"><strong>Not hungry but know you should:</strong> 1 scoop protein powder in water or milk ≈ 25g. Minimum effort, maximum result.</div>
+          <div class="sub-item"><strong>Savoury:</strong> Rice cakes + smoked salmon + cream cheese ≈ 16g.</div>
+        </div>
+      </div>
+
+      <!-- DINNER -->
+      <div class="mc" id="m-dinner">
+        <div class="mc-top" onclick="toggleMeal('m-dinner',38)">
+          <div class="mc-emoji">🍽</div>
+          <div class="mc-info"><div class="mc-name">Dinner</div><div class="mc-sub">6:30pm · 35–40g protein</div></div>
+          <div class="mc-status" id="ms-dinner">✓</div>
+        </div>
+        <div class="mc-protein">Suggestion: Salmon + sweet potato + broccoli ≈ 42g</div>
+        <div class="mc-subs-btn" onclick="toggleSubs('subs-dinner')">🔄 <span>Don't have that? See substitutions</span></div>
+        <div class="mc-subs" id="subs-dinner">
+          <div class="sub-item"><strong>No salmon:</strong> Chicken thighs baked in the oven + any roasted veg ≈ 38g. Hands-off, 25 min, done.</div>
+          <div class="sub-item"><strong>Don't feel like cooking:</strong> Canned tuna or salmon + microwaved sweet potato + bagged salad ≈ 35g. 5 minutes.</div>
+          <div class="sub-item"><strong>Takeout night:</strong> Sushi (sashimi + edamame + miso soup) ≈ 35g. Best takeout option. Greek restaurant also excellent.</div>
+          <div class="sub-item"><strong>Ground beef easy bowl:</strong> 170g ground beef browned in a pan + rice + any veg from the fridge ≈ 40g. 15 min, zero effort.</div>
+          <div class="sub-item"><strong>Vegetarian:</strong> 2 eggs + lentil dahl + spinach + hemp hearts ≈ 30g. Good but lower — add protein powder to hit 40g if needed.</div>
+          <div class="sub-item"><strong>Period week:</strong> Red meat is genuinely best this week — iron loss is real. Ground beef or lean steak with dark greens, ideally.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <div class="sec-head" style="font-size:1.05rem">Protein Cheat Sheet 📋</div>
+        <div class="sec-sub" style="margin-bottom:10px">At a glance — no counting needed</div>
+        <div class="card">
+          <div style="font-size:0.83rem;line-height:2.1;color:var(--cream-dim)">
+            🥚 1 egg = <strong style="color:var(--cream)">6g</strong><br>
+            🫙 1 cup Greek yogurt = <strong style="color:var(--cream)">18–20g</strong><br>
+            🌿 3 tbsp hemp hearts = <strong style="color:var(--cream)">10g</strong><br>
+            🐟 200g salmon = <strong style="color:var(--cream)">40g</strong><br>
+            🍗 150g chicken = <strong style="color:var(--cream)">35g</strong><br>
+            🥩 150g beef = <strong style="color:var(--cream)">30g</strong><br>
+            🧀 1 cup cottage cheese = <strong style="color:var(--cream)">25g</strong><br>
+            🌱 1 cup lentils cooked = <strong style="color:var(--cream)">18g</strong><br>
+            🥛 1 scoop protein powder = <strong style="color:var(--cream)">22–25g</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SUPPLEMENTS ═══ -->
+    <div id="s-supps" class="screen">
+      <div style="height:12px"></div>
+      <div class="sec-head">Supplements 💊</div>
+      <div class="sec-sub">Tap each one when you've taken it</div>
+      <div class="note-box" id="suppHormoneNote" style="margin-bottom:13px"></div>
+
+      <div class="cg-title"><div class="cg-dot" style="background:var(--rose)"></div>Morning</div>
+      <div class="sg2">
+        <div class="sc2" id="s-iron" onclick="toggleSupp('iron')"><div class="sc2-timing"><span class="badge b-rose">AM</span></div><div class="sc2-icon">🔴</div><div class="sc2-name">Iron + Vit C</div><div class="sc2-dose">25mg · empty stomach</div><div class="sc2-chk" id="sc-iron"></div></div>
+        <div class="sc2" id="s-greens" onclick="toggleSupp('greens')"><div class="sc2-timing"><span class="badge b-sage">AM</span></div><div class="sc2-icon">🌿</div><div class="sc2-name">Greens HD</div><div class="sc2-dose">1 scoop in water</div><div class="sc2-chk" id="sc-greens"></div></div>
+        <div class="sc2" id="s-d3" onclick="toggleSupp('d3')"><div class="sc2-timing"><span class="badge b-gold">AM</span></div><div class="sc2-icon">☀️</div><div class="sc2-name">Vitamin D3</div><div class="sc2-dose">2–4 caps with fat</div><div class="sc2-chk" id="sc-d3"></div></div>
+        <div class="sc2" id="s-b12" onclick="toggleSupp('b12')"><div class="sc2-timing"><span class="badge b-gold">AM</span></div><div class="sc2-icon">🟡</div><div class="sc2-name">B6 + B12</div><div class="sc2-dose">1 tablet with food</div><div class="sc2-chk" id="sc-b12"></div></div>
+      </div>
+
+      <div class="cg-title"><div class="cg-dot" style="background:var(--gold)"></div>With Meals</div>
+      <div class="sg2">
+        <div class="sc2" id="s-coq10" onclick="toggleSupp('coq10')"><div class="sc2-timing"><span class="badge b-gold">Bfast</span></div><div class="sc2-icon">💛</div><div class="sc2-name">CoQ10</div><div class="sc2-dose">200mg with fat</div><div class="sc2-chk" id="sc-coq10"></div></div>
+        <div class="sc2" id="s-berb" onclick="toggleSupp('berb')"><div class="sc2-timing"><span class="badge b-sage">Meals</span></div><div class="sc2-icon">🌱</div><div class="sc2-name">Berberine</div><div class="sc2-dose">500mg with meals</div><div class="sc2-chk" id="sc-berb"></div></div>
+        <div class="sc2" id="s-zinc" onclick="toggleSupp('zinc')"><div class="sc2-timing"><span class="badge b-blue">Lunch</span></div><div class="sc2-icon">🔷</div><div class="sc2-name">Zinc Citrate</div><div class="sc2-dose">50mg with lunch</div><div class="sc2-chk" id="sc-zinc"></div></div>
+        <div class="sc2" id="s-enz" onclick="toggleSupp('enz')"><div class="sc2-timing"><span class="badge b-rose">Meals</span></div><div class="sc2-icon">🔬</div><div class="sc2-name">Digestive Enzyme</div><div class="sc2-dose">1 tab each meal</div><div class="sc2-chk" id="sc-enz"></div></div>
+      </div>
+
+      <div class="cg-title"><div class="cg-dot" style="background:var(--blue)"></div>Post-Workout / Evening</div>
+      <div class="sg2">
+        <div class="sc2" id="s-creat" onclick="toggleSupp('creat')"><div class="sc2-timing"><span class="badge b-blue">PM</span></div><div class="sc2-icon">⚡</div><div class="sc2-name">Creatine</div><div class="sc2-dose">3–5g daily</div><div class="sc2-chk" id="sc-creat"></div></div>
+        <div class="sc2" id="s-glut" onclick="toggleSupp('glut')"><div class="sc2-timing"><span class="badge b-blue">PM</span></div><div class="sc2-icon">💪</div><div class="sc2-name">Glutamine</div><div class="sc2-dose">5g post-workout</div><div class="sc2-chk" id="sc-glut"></div></div>
+        <div class="sc2" id="s-ginger" onclick="toggleSupp('ginger')"><div class="sc2-timing"><span class="badge b-gold">PRN</span></div><div class="sc2-icon">🫚</div><div class="sc2-name">Ginger Root</div><div class="sc2-dose">1–2 caps as needed</div><div class="sc2-chk" id="sc-ginger"></div></div>
+        <div class="sc2" id="s-eaa" onclick="toggleSupp('eaa')"><div class="sc2-timing"><span class="badge b-purple">Train</span></div><div class="sc2-icon">🏋️</div><div class="sc2-name">EAA Quench</div><div class="sc2-dose">1 scoop training days</div><div class="sc2-chk" id="sc-eaa"></div></div>
+      </div>
+
+      <div class="cg-title"><div class="cg-dot" style="background:var(--purple)"></div>Bedtime</div>
+      <div class="sg2">
+        <div class="sc2" id="s-prog" onclick="toggleSupp('prog')"><div class="sc2-timing"><span class="badge b-purple">9pm</span></div><div class="sc2-icon">💊</div><div class="sc2-name">Progesterone</div><div class="sc2-dose">100mg SR · Days 14–28</div><div class="sc2-chk" id="sc-prog"></div></div>
+        <div class="sc2" id="s-mag" onclick="toggleSupp('mag')"><div class="sc2-timing"><span class="badge b-purple">9pm</span></div><div class="sc2-icon">🌙</div><div class="sc2-name">Magnesium</div><div class="sc2-dose">200–400mg · sleep</div><div class="sc2-chk" id="sc-mag"></div></div>
+      </div>
+    </div>
+
+    <!-- ═══ TRACK ═══ -->
+    <div id="s-track" class="screen">
+      <div style="height:12px"></div>
+      <div class="sec-head">Weight & Body 📊</div>
+      <div class="sec-sub">Log daily — same time works best (morning, after bathroom)</div>
+
+      <div class="note-box">
+        <strong>Why track weight daily?</strong> One number means nothing. The trend over 2–4 weeks tells the real story. Expect normal fluctuation of 1–3 lb day to day from water, food timing, and your cycle. Don't react to a single number. React to the direction over time.
+      </div>
+
+      <div class="card">
+        <div class="card-title">Log Today's Weight</div>
+        <div class="weight-input-wrap">
+          <input class="weight-input" type="number" id="weightInput" placeholder="e.g. 132.0" step="0.1" min="80" max="300" inputmode="decimal">
+          <button class="weight-save-btn" onclick="saveWeight()">Log it</button>
+        </div>
+        <div style="font-size:0.75rem;color:var(--cream-dim)">In pounds · best tracked at same time each morning</div>
+      </div>
+
+      <div class="weight-chart" id="weightChart">
+        <div class="wc-header">
+          <span class="wc-title">May Trend</span>
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span class="wc-current" id="wcCurrent">--</span><span class="wc-unit">lb</span>
+            <span class="wc-trend" id="wcTrend"></span>
+          </div>
+        </div>
+        <div class="wc-grid" id="wcGrid"></div>
+      </div>
+
+      <div id="weightLog"></div>
+    </div>
+
+    <!-- ═══ REFLECT ═══ -->
+    <div id="s-reflect" class="screen">
+      <div style="height:12px"></div>
+      <div class="sec-head">Nightly Check-in 🌙</div>
+      <div class="sec-sub" id="reflectSub">A few honest questions. Takes 2 minutes.</div>
+
+      <div class="note-box rose">
+        <strong>Why this matters:</strong> You're starting HRT for the first time. Your body will respond over weeks, not days. These notes tell us what's actually working, what needs adjusting, and whether the doses are right. Be honest — even a bad day is useful data.
+      </div>
+
+      <div class="ref-section">
+        <div class="card-title">Tonight's Reflection — <span id="refDate"></span></div>
+
+        <!-- Q1: Overall energy -->
+        <div class="ref-q">
+          <div class="ref-q-text">How was your energy today overall?</div>
+          <div class="ref-q-sub">Think about AM vs PM, during activity, and right now</div>
+          <div class="rating-row">
+            <button class="rb" data-q="energy" data-v="1" onclick="setRating('energy',1,this)">😩 Low</button>
+            <button class="rb" data-q="energy" data-v="2" onclick="setRating('energy',2,this)">😕 Meh</button>
+            <button class="rb" data-q="energy" data-v="3" onclick="setRating('energy',3,this)">🙂 OK</button>
+            <button class="rb" data-q="energy" data-v="4" onclick="setRating('energy',4,this)">😊 Good</button>
+            <button class="rb" data-q="energy" data-v="5" onclick="setRating('energy',5,this)">🔥 Great</button>
+          </div>
+        </div>
+
+        <!-- Q2: Sleep quality last night -->
+        <div class="ref-q">
+          <div class="ref-q-text">How did you sleep last night?</div>
+          <div class="ref-q-sub">Night sweats, waking up, racing thoughts, restless legs — note it</div>
+          <div class="rating-row">
+            <button class="rb" data-q="sleep" data-v="1" onclick="setRating('sleep',1,this)">😩 Bad</button>
+            <button class="rb" data-q="sleep" data-v="2" onclick="setRating('sleep',2,this)">😕 Poor</button>
+            <button class="rb" data-q="sleep" data-v="3" onclick="setRating('sleep',3,this)">🙂 OK</button>
+            <button class="rb" data-q="sleep" data-v="4" onclick="setRating('sleep',4,this)">😊 Good</button>
+            <button class="rb" data-q="sleep" data-v="5" onclick="setRating('sleep',5,this)">🌙 Deep</button>
+          </div>
+        </div>
+
+        <!-- Q3: Mood -->
+        <div class="ref-q">
+          <div class="ref-q-text">Mood today?</div>
+          <div class="ref-q-sub">Anxiety, irritability, brain fog, or emotional swings — all worth noting</div>
+          <div class="emoji-row">
+            <button class="eb" data-q="mood" data-v="1" onclick="setEmoji('mood',1,this)">😤</button>
+            <button class="eb" data-q="mood" data-v="2" onclick="setEmoji('mood',2,this)">😞</button>
+            <button class="eb" data-q="mood" data-v="3" onclick="setEmoji('mood',3,this)">😐</button>
+            <button class="eb" data-q="mood" data-v="4" onclick="setEmoji('mood',4,this)">🙂</button>
+            <button class="eb" data-q="mood" data-v="5" onclick="setEmoji('mood',5,this)">😄</button>
+          </div>
+        </div>
+
+        <!-- Q4: HRT symptoms -->
+        <div class="ref-q">
+          <div class="ref-q-text">Any new sensations since starting HRT?</div>
+          <div class="ref-q-sub">Breast tenderness, bloating, skin changes, spotting, headaches, nausea — all trackable, all normal early on</div>
+          <div class="yn-row">
+            <button class="yn-btn" data-q="hrt" data-v="none" onclick="setYN('hrt','none',this)">Nothing new</button>
+            <button class="yn-btn" data-q="hrt" data-v="mild" onclick="setYN('hrt','mild',this)">Mild things</button>
+            <button class="yn-btn" data-q="hrt" data-v="notable" onclick="setYN('hrt','notable',this)">Something notable</button>
+          </div>
+        </div>
+
+        <!-- Q5: Hot flashes / night sweats -->
+        <div class="ref-q">
+          <div class="ref-q-text">Hot flashes or night sweats today?</div>
+          <div class="ref-q-sub">Tracking frequency helps us know if the estrogen dose is right</div>
+          <div class="yn-row">
+            <button class="yn-btn" data-q="hotflash" data-v="none" onclick="setYN('hotflash','none',this)">None</button>
+            <button class="yn-btn" data-q="hotflash" data-v="1-2" onclick="setYN('hotflash','1-2',this)">1–2 times</button>
+            <button class="yn-btn" data-q="hotflash" data-v="3plus" onclick="setYN('hotflash','3plus',this)">3+ times</button>
+          </div>
+        </div>
+
+        <!-- Q6: Digestion -->
+        <div class="ref-q">
+          <div class="ref-q-text">How was your digestion today?</div>
+          <div class="ref-q-sub">Bloating, cramping, constipation, or loose stools — common early on with new supplements</div>
+          <div class="rating-row">
+            <button class="rb" data-q="digest" data-v="1" onclick="setRating('digest',1,this)">Bad</button>
+            <button class="rb" data-q="digest" data-v="2" onclick="setRating('digest',2,this)">Off</button>
+            <button class="rb" data-q="digest" data-v="3" onclick="setRating('digest',3,this)">OK</button>
+            <button class="rb" data-q="digest" data-v="4" onclick="setRating('digest',4,this)">Good</button>
+            <button class="rb" data-q="digest" data-v="5" onclick="setRating('digest',5,this)">Great</button>
+          </div>
+        </div>
+
+        <!-- Q7: Hunger / appetite -->
+        <div class="ref-q">
+          <div class="ref-q-text">Hunger and appetite today?</div>
+          <div class="ref-q-sub">Unusually hungry, or no appetite at all? HRT and cycle phase affect this</div>
+          <div class="yn-row">
+            <button class="yn-btn" data-q="hunger" data-v="low" onclick="setYN('hunger','low',this)">Low appetite</button>
+            <button class="yn-btn" data-q="hunger" data-v="normal" onclick="setYN('hunger','normal',this)">Normal</button>
+            <button class="yn-btn" data-q="hunger" data-v="high" onclick="setYN('hunger','high',this)">Very hungry</button>
+          </div>
+        </div>
+
+        <!-- Q8: Libido / motivation -->
+        <div class="ref-q">
+          <div class="ref-q-text">Drive and motivation today?</div>
+          <div class="ref-q-sub">Testosterone is partly for this — honest tracking helps calibrate the dose over time</div>
+          <div class="rating-row">
+            <button class="rb" data-q="drive" data-v="1" onclick="setRating('drive',1,this)">Zero</button>
+            <button class="rb" data-q="drive" data-v="2" onclick="setRating('drive',2,this)">Low</button>
+            <button class="rb" data-q="drive" data-v="3" onclick="setRating('drive',3,this)">Normal</button>
+            <button class="rb" data-q="drive" data-v="4" onclick="setRating('drive',4,this)">Good</button>
+            <button class="rb" data-q="drive" data-v="5" onclick="setRating('drive',5,this)">High</button>
+          </div>
+        </div>
+
+        <!-- Q9: Brain fog -->
+        <div class="ref-q">
+          <div class="ref-q-text">Brain fog or mental clarity today?</div>
+          <div class="ref-q-sub">Concentration, word-finding, memory — estrogen directly affects this</div>
+          <div class="yn-row">
+            <button class="yn-btn" data-q="fog" data-v="heavy" onclick="setYN('fog','heavy',this)">Heavy fog</button>
+            <button class="yn-btn" data-q="fog" data-v="some" onclick="setYN('fog','some',this)">A bit foggy</button>
+            <button class="yn-btn" data-q="fog" data-v="clear" onclick="setYN('fog','clear',this)">Clear head</button>
+          </div>
+        </div>
+
+        <!-- Q10: Body changes -->
+        <div class="ref-q">
+          <div class="ref-q-text">Any physical changes worth noting?</div>
+          <div class="ref-q-sub">Skin texture, water retention, bloating, breast changes, hair — even subtle things</div>
+          <div class="yn-row">
+            <button class="yn-btn" data-q="body" data-v="none" onclick="setYN('body','none',this)">Nothing yet</button>
+            <button class="yn-btn" data-q="body" data-v="subtle" onclick="setYN('body','subtle',this)">Subtle things</button>
+            <button class="yn-btn" data-q="body" data-v="noticeable" onclick="setYN('body','noticeable',this)">Noticeable</button>
+          </div>
+        </div>
+
+        <!-- Q11: Open notes -->
+        <div class="ref-q">
+          <div class="ref-q-text">Anything else today worth noting?</div>
+          <div class="ref-q-sub">Anything — pain, wins, questions, how you feel about all this. This space is just for you.</div>
+          <textarea class="ref-textarea" id="refNotes" placeholder="How are you actually feeling? Any symptoms, observations, questions, or just how the day went..."></textarea>
+        </div>
+
+        <button class="ref-save-btn" onclick="saveReflection()">Save tonight's check-in ✓</button>
+      </div>
+
+      <!-- Saved reflections -->
+      <div id="savedReflections"></div>
+
+      <div style="margin-top:8px">
+        <button class="export-btn" onclick="exportData()">📋 Export all data for Sean</button>
+        <div style="font-size:0.72rem;color:var(--cream-dim);text-align:center;margin-top:6px">Copies all your logs to clipboard so you can send them at end of month</div>
+      </div>
+    </div>
+
+  </div><!-- end main-scroll -->
+
+  <nav class="bnav">
+    <button class="ni active" id="n-today" onclick="switchScreen('today')"><div class="ni-icon">✅</div><div class="ni-label">Today</div></button>
+    <button class="ni" id="n-water" onclick="switchScreen('water')"><div class="ni-icon">💧</div><div class="ni-label">Water</div></button>
+    <button class="ni" id="n-meals" onclick="switchScreen('meals')"><div class="ni-icon">🥗</div><div class="ni-label">Meals</div></button>
+    <button class="ni" id="n-supps" onclick="switchScreen('supps')"><div class="ni-icon">💊</div><div class="ni-label">Supps</div></button>
+    <button class="ni" id="n-track" onclick="switchScreen('track')"><div class="ni-icon">⚖️</div><div class="ni-label">Weight</div></button>
+    <button class="ni" id="n-reflect" onclick="switchScreen('reflect')"><div class="ni-icon">🌙</div><div class="ni-label">Journal</div></button>
+  </nav>
+</div>
+
+<script>
+// ─── STORAGE KEYS ───
+const DAY_KEY   = 'jenny_day';
+const STATE_KEY = 'jenny_state';
+const WEIGHT_KEY= 'jenny_weights';
+const REF_KEY   = 'jenny_reflections';
+const SUPPS_KEY = 'jenny_supps';
+
+// ─── STATE ───
+let S = { checks:{}, water:0, protein:0, meals:{} };
+let weights   = {};   // { "2026-05-17": 132.0 }
+let reflections = {}; // { "2026-05-17": { energy:3, sleep:4, ... } }
+let suppState = {};
+let currentRef= {};
+
+function todayKey(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function dayNum(){ return new Date().getDate(); }
+function fmtDate(k){ const [y,m,d]=k.split('-'); const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return mn[parseInt(m)-1]+' '+d; }
+
+function loadAll(){
+  const saved = localStorage.getItem(STATE_KEY);
+  if(saved){
+    const p=JSON.parse(saved);
+    if(p.day===todayKey()) S=p;
+    else S={checks:{},water:0,protein:0,meals:{},day:todayKey()};
+  } else { S.day=todayKey(); }
+  try{ weights=JSON.parse(localStorage.getItem(WEIGHT_KEY)||'{}'); }catch(e){}
+  try{ reflections=JSON.parse(localStorage.getItem(REF_KEY)||'{}'); }catch(e){}
+  try{ const ss=JSON.parse(localStorage.getItem(SUPPS_KEY)||'{}'); if(ss.day===todayKey()) suppState=ss; }catch(e){}
+}
+function saveS(){ S.day=todayKey(); localStorage.setItem(STATE_KEY,JSON.stringify(S)); }
+function saveW(){ localStorage.setItem(WEIGHT_KEY,JSON.stringify(weights)); }
+function saveRef(){ localStorage.setItem(REF_KEY,JSON.stringify(reflections)); }
+function saveSup(){ suppState.day=todayKey(); localStorage.setItem(SUPPS_KEY,JSON.stringify(suppState)); }
+
+// ─── CHECK ITEMS ───
+function toggleCI(id,pts,type,protein){
+  const el=document.getElementById(id);
+  const box=document.getElementById('cb-'+id.replace('c-',''));
+  if(!el) return;
+  const was=el.classList.contains('done');
+  if(was){
+    el.classList.remove('done');
+    if(box) box.innerHTML='';
+    S.checks[id]=false;
+    if(type==='meal'&&protein){ S.protein=Math.max(0,(S.protein||0)-protein); updatePStats(); }
+  } else {
+    el.classList.add('done');
+    if(box) box.innerHTML='✓';
+    S.checks[id]=true;
+    if(type==='meal'&&protein){
+      S.protein=(S.protein||0)+protein;
+      updatePStats();
+      toast('+'+protein+'g protein 🥩');
+      if(S.protein>=120) setTimeout(celebrate,400);
+    } else { toast(MSGS[Math.floor(Math.random()*MSGS.length)]); }
+  }
+  saveS(); updateProgress();
+}
+
+// ─── MEAL CARDS ───
+function toggleMeal(id,protein){
+  const c=document.getElementById(id);
+  const ms=document.getElementById('ms-'+id.replace('m-',''));
+  if(!c) return;
+  const was=c.classList.contains('eaten');
+  if(was){
+    c.classList.remove('eaten');
+    if(ms){ms.style.background='';ms.style.borderColor='';ms.style.color='';}
+    S.meals[id]=false;
+    S.protein=Math.max(0,(S.protein||0)-protein);
+    // sync today tab
+    syncTodayCheck(id,false,protein);
+  } else {
+    c.classList.add('eaten');
+    if(ms){ms.style.background='var(--sage)';ms.style.borderColor='var(--sage)';ms.style.color='#0f0f1a';}
+    S.meals[id]=true;
+    S.protein=(S.protein||0)+protein;
+    syncTodayCheck(id,true,protein);
+    toast('Meal logged! +'+protein+'g protein 💪');
+    if(S.protein>=120) setTimeout(celebrate,400);
+  }
+  saveS(); updatePStats(); updateProgress();
+}
+function syncTodayCheck(mealId,done,protein){
+  const map={'m-breakfast':'c-breakfast','m-lunch':'c-lunch','m-snack':'c-snack','m-dinner':'c-dinner'};
+  const cid=map[mealId]; if(!cid) return;
+  const el=document.getElementById(cid);
+  const box=document.getElementById('cb-'+cid.replace('c-',''));
+  if(el){ if(done){el.classList.add('done');}else{el.classList.remove('done');} }
+  if(box){ box.innerHTML=done?'✓':''; }
+  S.checks[cid]=done;
+}
+
+function toggleSubs(id){
+  const el=document.getElementById(id);
+  if(!el) return;
+  const open=el.classList.contains('open');
+  document.querySelectorAll('.mc-subs').forEach(s=>s.classList.remove('open'));
+  if(!open) el.classList.add('open');
+}
+
+// ─── SUPPLEMENTS ───
+function toggleSupp(id){
+  const c=document.getElementById('s-'+id);
+  const chk=document.getElementById('sc-'+id);
+  if(!c) return;
+  const was=c.classList.contains('taken');
+  if(was){ c.classList.remove('taken'); if(chk){chk.innerHTML='';chk.style.background='';chk.style.borderColor='';} suppState[id]=false; }
+  else { c.classList.add('taken'); if(chk){chk.innerHTML='✓';chk.style.background='var(--sage)';chk.style.borderColor='var(--sage)';chk.style.color='#0f0f1a';} suppState[id]=true; toast('Taken ✓'); }
+  saveSup();
+}
+
+// ─── WATER ───
+function buildWater(){
+  const wrap=document.getElementById('wcups');
+  if(!wrap) return;
+  wrap.innerHTML='';
+  for(let i=0;i<10;i++){
+    const d=document.createElement('div');
+    d.className='wc'+(i<(S.water||0)?' filled':'');
+    d.innerHTML=i<(S.water||0)?'💧':'○';
+    d.onclick=()=>tapWater(i);
+    wrap.appendChild(d);
+  }
+  updateWaterDisplay();
+}
+function tapWater(i){
+  S.water=(i<S.water)?i:i+1;
+  saveS(); buildWater(); updateWaterDisplay(); updateProgress();
+  const sw2=document.getElementById('sw');
+  if(sw2) sw2.textContent=S.water;
+  if(S.water>=10){toast('Hydration goal done! 💧🎉');setTimeout(celebrate,300);}
+  else if(S.water>0&&S.water%3===0) toast('Hydrating well 💧');
+}
+function updateWaterDisplay(){
+  const n=document.getElementById('wnum'); if(n) n.textContent=S.water||0;
+  const ml=document.getElementById('wml'); if(ml) ml.textContent=((S.water||0)*250)+'ml of 2,500ml';
+  const pct=Math.min(100,((S.water||0)/10)*100);
+  const wp=document.getElementById('wpct'); if(wp) wp.textContent=Math.round(pct)+'%';
+  const wf=document.getElementById('wbarFill'); if(wf) wf.style.width=pct+'%';
+  const sw=document.getElementById('sw'); if(sw) sw.textContent=S.water||0;
+}
+
+// ─── PROTEIN ───
+function updatePStats(){
+  const p=S.protein||0;
+  const pc=document.getElementById('pCur'); if(pc) pc.textContent=p;
+  const sp=document.getElementById('sp'); if(sp) sp.textContent=p;
+  const pf=document.getElementById('pFill'); if(pf) pf.style.width=Math.min(100,(p/120)*100)+'%';
+  const ps=document.getElementById('pStatus');
+  if(ps){
+    if(p===0) ps.textContent='Tap each meal below as you eat it';
+    else if(p<60) ps.textContent='Good start — keep building!';
+    else if(p<100) ps.textContent='Halfway there. Keep going 💪';
+    else if(p<120) ps.textContent='Almost at goal. One more meal.';
+    else ps.textContent='🎉 Protein goal hit! Amazing work.';
+  }
+}
+
+// ─── PROGRESS RING ───
+function updateProgress(){
+  const items=document.querySelectorAll('#s-today .ci');
+  const total=items.length; let done=0;
+  items.forEach(i=>{ if(i.classList.contains('done')) done++; });
+  const pct=total>0?Math.round((done/total)*100):0;
+  const df=document.getElementById('dpFill'); if(df) df.style.width=pct+'%';
+  const dd=document.getElementById('dpDone'); if(dd) dd.textContent=done+' of '+total+' done';
+  const dp=document.getElementById('dpPct'); if(dp) dp.textContent=pct+'%';
+  const rf=document.getElementById('ringFill');
+  const rt=document.getElementById('ringTxt');
+  if(rf) rf.style.strokeDashoffset=131.9-(131.9*pct/100);
+  if(rt) rt.textContent=pct+'%';
+  if(pct===100&&done>8){toast('Perfect day Jenny! 🌟');setTimeout(celebrate,600);}
+}
+
+// ─── WEIGHT ───
+function saveWeight(){
+  const input=document.getElementById('weightInput');
+  const v=parseFloat(input.value);
+  if(!v||v<80||v>300){toast('Please enter a valid weight');return;}
+  const k=todayKey();
+  weights[k]=v;
+  saveW();
+  input.value='';
+  const sw2=document.getElementById('sw2');
+  if(sw2) sw2.textContent=v;
+  const rs=document.getElementById('refStatus');
+  if(rs&&rs.textContent==='Pending') {}
+  renderWeightChart();
+  renderWeightLog();
+  toast('Weight logged: '+v+' lb ✓');
+}
+function renderWeightChart(){
+  const grid=document.getElementById('wcGrid');
+  const cur=document.getElementById('wcCurrent');
+  const trend=document.getElementById('wcTrend');
+  if(!grid) return;
+  const keys=Object.keys(weights).sort();
+  if(keys.length===0){grid.innerHTML='<div class="wc-empty">No entries yet — log your first weight above</div>';if(cur) cur.textContent='--';return;}
+  const vals=keys.map(k=>weights[k]);
+  const min=Math.min(...vals); const max=Math.max(...vals);
+  const range=Math.max(max-min,2);
+  grid.innerHTML='';
+  keys.slice(-15).forEach(k=>{
+    const v=weights[k];
+    const h=Math.max(6,((v-min)/range)*58+6);
+    const wrap=document.createElement('div');
+    wrap.className='wc-bar-wrap';
+    wrap.innerHTML=`<div class="wc-bar" style="height:${h}px;background:var(--rose);opacity:0.7"></div><div class="wc-bar-date">${k.slice(5)}</div>`;
+    grid.appendChild(wrap);
+  });
+  const latest=weights[keys[keys.length-1]];
+  if(cur) cur.textContent=latest;
+  if(trend&&keys.length>=2){
+    const prev=weights[keys[keys.length-2]];
+    const diff=(latest-prev).toFixed(1);
+    if(diff<0){trend.textContent=diff+' lb';trend.style.background='rgba(123,191,138,0.2)';trend.style.color='var(--sage)';}
+    else if(diff>0){trend.textContent='+'+diff+' lb';trend.style.background='rgba(212,168,83,0.2)';trend.style.color='var(--gold)';}
+    else{trend.textContent='No change';trend.style.background='var(--surface2)';trend.style.color='var(--cream-dim)';}
+  }
+}
+function renderWeightLog(){
+  const wrap=document.getElementById('weightLog');
+  if(!wrap) return;
+  const keys=Object.keys(weights).sort().reverse();
+  if(keys.length===0){wrap.innerHTML='';return;}
+  wrap.innerHTML='<div class="card-title" style="margin-bottom:10px">Recent Logs</div>';
+  keys.slice(0,10).forEach(k=>{
+    const el=document.createElement('div');
+    el.className='log-entry';
+    el.innerHTML=`<div class="log-date">${fmtDate(k)}</div><div class="log-row"><span class="log-key">Weight</span><span class="log-val">${weights[k]} lb</span></div>`;
+    wrap.appendChild(el);
+  });
+}
+
+// ─── REFLECTION ───
+const R_LABELS={
+  energy:{1:'Low',2:'Meh',3:'OK',4:'Good',5:'Great'},
+  sleep:{1:'Bad',2:'Poor',3:'OK',4:'Good',5:'Deep'},
+  mood:{1:'😤',2:'😞',3:'😐',4:'🙂',5:'😄'},
+  digest:{1:'Bad',2:'Off',3:'OK',4:'Good',5:'Great'},
+  drive:{1:'Zero',2:'Low',3:'Normal',4:'Good',5:'High'}
+};
+function setRating(q,v,btn){
+  currentRef[q]=v;
+  btn.closest('.rating-row').querySelectorAll('.rb').forEach((b,i)=>{ b.className='rb'; if(parseInt(b.dataset.v)===v) b.className='rb sel-'+v; });
+}
+function setEmoji(q,v,btn){
+  currentRef[q]=v;
+  btn.closest('.emoji-row').querySelectorAll('.eb').forEach(b=>{ b.classList.remove('sel'); if(parseInt(b.dataset.v)===v) b.classList.add('sel'); });
+}
+function setYN(q,v,btn){
+  currentRef[q]=v;
+  btn.closest('.yn-row').querySelectorAll('.yn-btn').forEach(b=>{ b.className='yn-btn'; if(b.dataset.v===v) b.className='yn-btn sel-yes'; });
+}
+function saveReflection(){
+  const notes=document.getElementById('refNotes').value.trim();
+  const k=todayKey();
+  reflections[k]={...currentRef, notes, timestamp:new Date().toISOString(), weight:weights[k]||null};
+  saveRef();
+  currentRef={};
+  // reset UI
+  document.querySelectorAll('.rb').forEach(b=>b.className='rb');
+  document.querySelectorAll('.eb').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('.yn-btn').forEach(b=>b.className='yn-btn');
+  document.getElementById('refNotes').value='';
+  renderReflections();
+  const rs=document.getElementById('refStatus');
+  if(rs){rs.textContent='Done ✓';rs.style.color='var(--sage)';}
+  toast('Check-in saved 🌙 Great work today.');
+  setTimeout(celebrate,500);
+}
+function renderReflections(){
+  const wrap=document.getElementById('savedReflections');
+  if(!wrap) return;
+  const keys=Object.keys(reflections).sort().reverse();
+  if(keys.length===0){wrap.innerHTML='';return;}
+  let html='<div style="margin-top:20px"><div class="sec-head" style="font-size:1.05rem">Past Check-ins 📖</div><div class="sec-sub" style="margin-bottom:12px">Your honest record</div></div>';
+  keys.slice(0,14).forEach(k=>{
+    const r=reflections[k];
+    html+=`<div class="log-entry"><div class="log-date">${fmtDate(k)} ${r.timestamp?new Date(r.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</div>`;
+    if(r.energy!==undefined) html+=`<div class="log-row"><span class="log-key">Energy</span><span class="log-val">${R_LABELS.energy[r.energy]||r.energy}</span></div>`;
+    if(r.sleep!==undefined) html+=`<div class="log-row"><span class="log-key">Sleep</span><span class="log-val">${R_LABELS.sleep[r.sleep]||r.sleep}</span></div>`;
+    if(r.mood!==undefined) html+=`<div class="log-row"><span class="log-key">Mood</span><span class="log-val">${R_LABELS.mood[r.mood]||r.mood}</span></div>`;
+    if(r.hrt) html+=`<div class="log-row"><span class="log-key">HRT symptoms</span><span class="log-val">${r.hrt}</span></div>`;
+    if(r.hotflash) html+=`<div class="log-row"><span class="log-key">Hot flashes</span><span class="log-val">${r.hotflash}</span></div>`;
+    if(r.digest!==undefined) html+=`<div class="log-row"><span class="log-key">Digestion</span><span class="log-val">${R_LABELS.digest[r.digest]||r.digest}</span></div>`;
+    if(r.hunger) html+=`<div class="log-row"><span class="log-key">Hunger</span><span class="log-val">${r.hunger}</span></div>`;
+    if(r.drive!==undefined) html+=`<div class="log-row"><span class="log-key">Drive / motivation</span><span class="log-val">${R_LABELS.drive[r.drive]||r.drive}</span></div>`;
+    if(r.fog) html+=`<div class="log-row"><span class="log-key">Brain fog</span><span class="log-val">${r.fog}</span></div>`;
+    if(r.body) html+=`<div class="log-row"><span class="log-key">Body changes</span><span class="log-val">${r.body}</span></div>`;
+    if(r.weight) html+=`<div class="log-row"><span class="log-key">Weight</span><span class="log-val">${r.weight} lb</span></div>`;
+    if(r.notes) html+=`<div class="log-notes-text">"${r.notes}"</div>`;
+    html+='</div>';
+  });
+  wrap.innerHTML=html;
+}
+
+// ─── EXPORT ───
+function exportData(){
+  let txt='JENNY\'S WELLNESS DATA EXPORT\n';
+  txt+='Generated: '+new Date().toLocaleDateString()+'\n\n';
+  txt+='═══ WEIGHT LOG ═══\n';
+  Object.keys(weights).sort().forEach(k=>{ txt+=fmtDate(k)+': '+weights[k]+' lb\n'; });
+  txt+='\n═══ NIGHTLY REFLECTIONS ═══\n';
+  Object.keys(reflections).sort().forEach(k=>{
+    const r=reflections[k];
+    txt+='\n'+fmtDate(k)+':\n';
+    if(r.energy) txt+='  Energy: '+(R_LABELS.energy[r.energy]||r.energy)+'\n';
+    if(r.sleep) txt+='  Sleep: '+(R_LABELS.sleep[r.sleep]||r.sleep)+'\n';
+    if(r.mood) txt+='  Mood: '+(R_LABELS.mood[r.mood]||r.mood)+'\n';
+    if(r.hrt) txt+='  HRT symptoms: '+r.hrt+'\n';
+    if(r.hotflash) txt+='  Hot flashes: '+r.hotflash+'\n';
+    if(r.digest) txt+='  Digestion: '+(R_LABELS.digest[r.digest]||r.digest)+'\n';
+    if(r.hunger) txt+='  Hunger: '+r.hunger+'\n';
+    if(r.drive) txt+='  Drive/motivation: '+(R_LABELS.drive[r.drive]||r.drive)+'\n';
+    if(r.fog) txt+='  Brain fog: '+r.fog+'\n';
+    if(r.body) txt+='  Body changes: '+r.body+'\n';
+    if(r.notes) txt+='  Notes: "'+r.notes+'"\n';
+  });
+  try{
+    navigator.clipboard.writeText(txt).then(()=>toast('Copied to clipboard! Paste it in a message 📋'));
+  } catch(e){
+    // Fallback
+    const ta=document.createElement('textarea');
+    ta.value=txt;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('Copied! Send it to Sean 📋');
+  }
+}
+
+// ─── PHASE / HORMONE CONTEXT ───
+const PHASE_DATA={
+  17:{phase:'Late Luteal · Pre-Menstrual',c:'sage',note:'Progesterone: YES (bedtime). Testosterone: OFF. Period ~6 days away.',test:false,prog:true},
+  18:{phase:'Late Luteal · Lift Day',c:'sage',note:'Training day. Progesterone: YES. Testosterone: OFF.',test:false,prog:true},
+  19:{phase:'Late Luteal · Walk Day',c:'sage',note:'Progesterone: YES. Testosterone: OFF.',test:false,prog:true},
+  20:{phase:'Late Luteal · Day 27',c:'sage',note:'Progesterone: last 1–2 days. Testosterone: OFF. Train hard.',test:false,prog:true},
+  21:{phase:'Pre-Menstrual · Final Prog Night',c:'rose',note:'LAST progesterone tonight. Period ~2 days away.',test:false,prog:true},
+  22:{phase:'Pre-Menstrual · Rest Day',c:'rose',note:'No progesterone tonight. Period expected tomorrow.',test:false,prog:false},
+  23:{phase:'🩸 Period Day 1 · NEW CYCLE',c:'rose',note:'NEW CYCLE — Testosterone RESUMES today (Day 1).',test:true,prog:false},
+  24:{phase:'🩸 Period Day 2',c:'rose',note:'Testosterone Day 2. Iron priority. Rest day.',test:true,prog:false},
+  25:{phase:'🩸 Period Day 3',c:'rose',note:'Testosterone Day 3. Gentler day.',test:true,prog:false},
+  26:{phase:'Post-Period · Energy Returns',c:'gold',note:'Testosterone Day 4. Resume training.',test:true,prog:false},
+  27:{phase:'Early Follicular · Peak Week',c:'gold',note:'Testosterone Day 5. BEST training window. Push it.',test:true,prog:false},
+  28:{phase:'Early Follicular · Strong',c:'gold',note:'Testosterone Day 6. Great walk day.',test:true,prog:false},
+  29:{phase:'Early Follicular · Strong',c:'gold',note:'Testosterone Day 7. Log your lifts.',test:true,prog:false},
+  30:{phase:'Early Follicular · Rest',c:'gold',note:'Testosterone Day 8. Review the month.',test:true,prog:false},
+  31:{phase:'Early Follicular · Month Done',c:'gold',note:'Testosterone Day 9. Last day of May.',test:true,prog:false}
+};
+const C_COLS={sage:{bg:'rgba(123,191,138,0.07)',border:'rgba(123,191,138,0.18)',dot:'var(--sage)'},rose:{bg:'rgba(232,137,126,0.08)',border:'rgba(232,137,126,0.2)',dot:'var(--rose)'},gold:{bg:'rgba(212,168,83,0.08)',border:'rgba(212,168,83,0.18)',dot:'var(--gold)'}};
+
+function updatePhase(){
+  const d=dayNum(); const pd=PHASE_DATA[d]||PHASE_DATA[17];
+  const cc=C_COLS[pd.c]||C_COLS.sage;
+  const b=document.getElementById('phaseBanner');
+  const dot=document.getElementById('phaseDot');
+  const txt=document.getElementById('phaseTxt');
+  if(b){b.style.background=cc.bg;b.style.borderColor=cc.border;}
+  if(dot) dot.style.background=cc.dot;
+  if(txt) txt.innerHTML='<strong>'+pd.phase+'</strong> · '+pd.note;
+
+  // Update hormone labels on Today tab
+  const tl=document.getElementById('testLabel');
+  const td=document.getElementById('testDetail');
+  if(tl&&td){
+    if(pd.test){tl.textContent='🧴 Testosterone · Apply today';td.textContent='Wrists → thighs · DO apply this morning (Day '+Math.max(1,(d-22))+' of new cycle)';}
+    else{tl.textContent='🧴 Testosterone · Skip today';td.textContent='OFF — testosterone resumes when new cycle starts (~May 23)';}
+  }
+  const pl=document.getElementById('progLabel');
+  const pd2=document.getElementById('progDetail');
+  if(pl&&pd2){
+    if(pd.prog){pl.textContent='💊 Progesterone 100mg SR · Take tonight';pd2.textContent='Oral at bedtime · tonight is active';}
+    else{pl.textContent='💊 Progesterone · Skip tonight';pd2.textContent='OFF — resumes Day 14 of new cycle (~June 6)';}
+  }
+
+  // Move labels
+  const ml=document.getElementById('moveLabel');
+  const md=document.getElementById('moveDetail');
+  if(ml&&md){
+    const dow=new Date().getDay();
+    if([23,24].includes(d)){ml.textContent='🧘 Rest or 20 min gentle walk';md.textContent='Period day — no training. Heat pad is valid.';}
+    else if([1,3,5].includes(dow)&&d>=26){ml.textContent='🏋️ Strength Training · 60 min';md.textContent='Peak week — push your lifts. EAAs intra-workout.';}
+    else if([1,3,5].includes(dow)){ml.textContent='🏋️ Strength Training · 45–60 min';md.textContent='Compound movements. EAA Quench intra-workout.';}
+    else if([6,0].includes(dow)){ml.textContent='🧘 Active Rest / Light Walk';md.textContent='5,000–7,000 steps. Move but don\'t push.';}
+    else{ml.textContent='🚶 Walk · 45–60 min';md.textContent='7,000–8,000 steps · get outside if you can';}
+  }
+
+  // Supp note
+  const sn=document.getElementById('suppHormoneNote');
+  if(sn){
+    let h='<strong>Today\'s hormone status:</strong> ';
+    h+=pd.test?'✅ Testosterone ON — apply this morning. ':'⏸ Testosterone OFF. ';
+    h+=pd.prog?'✅ Progesterone — take at bedtime tonight.':'⏸ Progesterone OFF. Resumes ~June 6.';
+    sn.innerHTML=h;
+  }
+
+  // Reflect sub
+  const rs=document.getElementById('reflectSub');
+  if(rs){
+    if(d>=23&&d<=25) rs.textContent='Period days — extra important to track HRT response.';
+    else if(d>=27) rs.textContent='Peak week — note your energy and strength levels.';
+    else rs.textContent='A few honest questions. Takes 2 minutes.';
+  }
+  const rd=document.getElementById('refDate');
+  if(rd) rd.textContent=fmtDate(todayKey());
+}
+
+// ─── HEADER ───
+function updateHeader(){
+  const h=new Date().getHours();
+  const tod=document.getElementById('tod');
+  if(tod){ if(h<12) tod.textContent='morning'; else if(h<17) tod.textContent='afternoon'; else tod.textContent='evening'; }
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const now=new Date();
+  const hd=document.getElementById('hdate');
+  if(hd) hd.textContent=days[now.getDay()]+', '+months[now.getMonth()]+' '+now.getDate();
+}
+
+// ─── SCREEN SWITCHING ───
+function switchScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
+  const sc=document.getElementById('s-'+name);
+  const nb=document.getElementById('n-'+name);
+  if(sc) sc.classList.add('active');
+  if(nb) nb.classList.add('active');
+  if(name==='water') buildWater();
+  if(name==='track'){renderWeightChart();renderWeightLog();}
+  if(name==='reflect') renderReflections();
+  window.scrollTo(0,0);
+}
+
+// ─── RESTORE STATE ───
+function restoreState(){
+  Object.entries(S.checks||{}).forEach(([id,v])=>{
+    if(!v) return;
+    const el=document.getElementById(id);
+    const box=document.getElementById('cb-'+id.replace('c-',''));
+    if(el) el.classList.add('done');
+    if(box) box.innerHTML='✓';
+  });
+  Object.entries(S.meals||{}).forEach(([id,v])=>{
+    if(!v) return;
+    const c=document.getElementById(id);
+    const ms=document.getElementById('ms-'+id.replace('m-',''));
+    if(c) c.classList.add('eaten');
+    if(ms){ms.style.background='var(--sage)';ms.style.borderColor='var(--sage)';ms.style.color='#0f0f1a';}
+  });
+  Object.entries(suppState).forEach(([id,v])=>{
+    if(!v||id==='day') return;
+    const c=document.getElementById('s-'+id);
+    const chk=document.getElementById('sc-'+id);
+    if(c) c.classList.add('taken');
+    if(chk){chk.innerHTML='✓';chk.style.background='var(--sage)';chk.style.borderColor='var(--sage)';chk.style.color='#0f0f1a';}
+  });
+  // Weight display
+  const k=todayKey();
+  if(weights[k]){
+    const sw2=document.getElementById('sw2');
+    if(sw2) sw2.textContent=weights[k];
+  }
+  // Reflection status
+  if(reflections[k]){
+    const rs=document.getElementById('refStatus');
+    if(rs){rs.textContent='Done ✓';rs.style.color='var(--sage)';}
+  }
+  buildWater();
+  updateWaterDisplay();
+  updatePStats();
+  updateProgress();
+}
+
+// ─── TOAST ───
+const MSGS=['Nailed it ✨','Keep going 💪','You\'re doing amazing 🌟','One step closer 🎯','That\'s the one 🔥','Love this consistency ✅'];
+let toastTimer=null;
+function toast(msg){
+  const t=document.getElementById('toast');
+  if(!t) return;
+  t.textContent=msg;
+  t.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ─── CONFETTI ───
+function celebrate(){
+  const w=document.getElementById('celebration');
+  if(!w) return;
+  w.innerHTML=''; w.classList.add('show');
+  const c=['#e8897e','#7bbf8a','#d4a853','#7ab4d4','#a48fd4','#f0a89e'];
+  for(let i=0;i<28;i++){
+    const p=document.createElement('div');
+    p.className='conf';
+    p.style.cssText=`left:${Math.random()*100}%;background:${c[Math.floor(Math.random()*c.length)]};animation-delay:${Math.random()*.5}s;animation-duration:${.9+Math.random()*.6}s;transform:rotate(${Math.random()*360}deg);border-radius:${Math.random()>.5?'50%':'2px'};`;
+    w.appendChild(p);
+  }
+  setTimeout(()=>{w.classList.remove('show');w.innerHTML='';},2000);
+}
+
+// ─── WELCOME ───
+function dismissWelcome(){
+  const w=document.getElementById('welcome');
+  if(w){w.classList.add('hidden');setTimeout(()=>w.style.display='none',400);}
+  try{localStorage.setItem('jenny_v2_welcomed','1');}catch(e){}
+}
+
+// ─── INIT ───
+function init(){
+  try{ if(localStorage.getItem('jenny_v2_welcomed')){ const w=document.getElementById('welcome'); if(w) w.style.display='none'; } }catch(e){}
+  loadAll();
+  updateHeader();
+  updatePhase();
+  restoreState();
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
